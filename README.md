@@ -5,4 +5,5 @@ my dotfiles / configs
 - lualine, nvim-tree, alpha, catppuccin-mocha, and kickstart.nvim
 
 gitbash: docker run -it -v //.:/local_file_system crooruhe/nvim:latest
+
 powershell: docker run -it -v .:/local_file_system crooruhe/nvim:latest
