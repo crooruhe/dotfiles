@@ -386,6 +386,13 @@ require("lazy").setup({
 	-- },
 	{ "Bilal2453/luvit-meta", lazy = true },
 	{
+		"windwp/nvim-autopairs",
+		event = "InsertEnter",
+		config = function()
+			require("nvim-autopairs").setup({})
+		end,
+	},
+	{
 		-- Main LSP Configuration - MANUAL INSTALLATION (NO MASON)
 		"neovim/nvim-lspconfig",
 		dependencies = {
@@ -836,6 +843,14 @@ require("lazy").setup({
 			require("lualine").setup({
 				options = {
 					theme = "dracula",
+					-- icon = "\u{f30c}",
+				},
+				sections = {
+					lualine_x = {
+						"encoding",
+						{ "fileformat", symbols = { unix = "\u{f30c}", dos = "", mac = "" } },
+						"filetype",
+					},
 				},
 			})
 		end,
