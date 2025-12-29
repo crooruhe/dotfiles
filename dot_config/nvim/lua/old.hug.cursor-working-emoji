@@ -1,0 +1,61 @@
+local M = {}
+
+local ns_id = vim.api.nvim_create_namespace("hug_cursor")
+local emoji = "🤗"
+
+local emoji_timer = nil
+
+local function hide_emoji()
+	vim.api.nvim_buf_clear_namespace(0, ns_id, 0, -1)
+end
+
+local function show_emoji()
+	if emoji_timer then
+		emoji_timer:stop()
+		emoji_timer:close()
+		emoji_timer = nil
+	end
+
+	vim.api.nvim_buf_clear_namespace(0, ns_id, 0, -1)
+
+	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+
+	pcall(function()
+		vim.api.nvim_buf_set_extmark(0, ns_id, row - 1, col, {
+			virt_text = { { emoji, "Comment" } },
+			virt_text_pos = "inline",
+		})
+	end)
+
+	emoji_timer = vim.uv.new_timer()
+	emoji_timer:start(
+		2000,
+		0,
+		vim.schedule_wrap(function()
+			hide_emoji()
+			emoji_timer:close()
+			emoji_timer = nil
+		end)
+	)
+end
+
+function M.setup()
+	local group = vim.api.nvim_create_augroup("HugCursor", { clear = true })
+
+	vim.api.nvim_create_autocmd("InsertEnter", {
+		group = group,
+		callback = show_emoji,
+	})
+
+	vim.api.nvim_create_autocmd("InsertLeave", {
+		group = group,
+		callback = hide_emoji,
+	})
+
+	vim.api.nvim_create_autocmd({ "CursorMovedI", "TextChangedI" }, {
+		group = group,
+		callback = show_emoji,
+	})
+end
+
+return M
